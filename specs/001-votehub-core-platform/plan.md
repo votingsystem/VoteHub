@@ -23,54 +23,62 @@ VoteHub is a Reddit-style voting platform that replaces binary upvote/downvote w
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 ### ✅ I. Clean Modular Architecture
+
 - **Requirement**: Service layer in `apps/web/services/`, Server Actions in `apps/web/actions/`, no business logic in components
 - **Status**: PASS - Plan follows Next.js 15 Server Actions pattern with separate service layer
 - **Implementation**: Poll management, voting logic, auth operations isolated in services; components call Server Actions
 
 ### ✅ II. Next.js 15 Best Practices (NON-NEGOTIABLE)
+
 - **Requirement**: Server Components by default, Client Components only for interactivity, Server Actions for mutations, Turbopack dev
 - **Status**: PASS - Architecture designed server-first
 - **Implementation**: Feed as Server Component, interactive elements (vote buttons, comment forms) as Client Components with Server Actions
 
 ### ✅ III. Monorepo Organization
+
 - **Requirement**: `apps/web/` for Next.js app, `packages/ui/` for components, workspace protocol for deps
 - **Status**: PASS - Existing monorepo structure used
 - **Implementation**: VoteHub extends existing structure: `apps/web/` (polls, voting), `packages/ui/` (poll cards, vote UI)
 
 ### ✅ IV. Component Library First
+
 - **Requirement**: All UI via shadcn CLI to `packages/ui`, custom components in `packages/ui/src/components/voting/`
 - **Status**: PASS - shadcn/ui integration planned
 - **Implementation**: Base components (Button, Card, Dialog) from shadcn; custom Poll Card, Vote Button, Comment Thread in `voting/`
 
 ### ✅ V. Type Safety
+
 - **Requirement**: TypeScript strict mode, explicit types for polls/votes, Zod validation, no `any` types
 - **Status**: PASS - Full TypeScript + Zod validation
 - **Implementation**: Types: `Poll`, `VoteOption`, `Vote`, `Comment`, `User`; Zod schemas for all API inputs
 
 ### ✅ VI. Reddit-Style UX Consistency
+
 - **Requirement**: Card feed, compact/expanded views, orange/blue colors, max 4 vote options (NOTE: Spec says 2-5, constitution says max 4 - NEEDS CLARIFICATION)
 - **Status**: **PARTIAL** - Vote option count discrepancy between spec (2-5) and constitution (max 4)
 - **Implementation**: Reddit-inspired design system with orange accents, card layout, sorting (Hot/New/Top/Trending)
 
 ### ⚠️ VII. Vote Integrity
+
 - **Requirement**: Server-side validation, one vote per user per poll, server-calculated results
 - **Status**: PASS with NOTE - Spec says votes cannot be changed (FR-016), constitution says "vote changes allowed but tracked"
 - **Implementation**: Database unique constraint (user_id, poll_id), Server Actions only, Zod validation, optimistic UI with rollback
 
 ### ✅ VIII. Progressive Enhancement
+
 - **Requirement**: Works without JS, WCAG 2.1 AA, keyboard navigation, native form submission
 - **Status**: PASS - Server Actions enable no-JS voting
 - **Implementation**: Forms use `action={serverAction}`, radio inputs for votes, server-rendered results
 
 ### 🔴 Discrepancies Requiring Resolution
 
-| Issue | Constitution | Spec | Resolution Needed |
-|-------|--------------|------|-------------------|
-| Vote option count | Max 4 (Principle VI) | 2-5 options (FR-008) | **CLARIFY**: Use 2-5 (spec wins) or enforce max 4 (constitution wins)? |
-| Vote changes | "allowed but tracked" (Principle VII) | "cannot change vote" (FR-016) | **CLARIFY**: Allow changes with audit trail or prohibit entirely? |
+| Issue             | Constitution                          | Spec                          | Resolution Needed                                                      |
+| ----------------- | ------------------------------------- | ----------------------------- | ---------------------------------------------------------------------- |
+| Vote option count | Max 4 (Principle VI)                  | 2-5 options (FR-008)          | **CLARIFY**: Use 2-5 (spec wins) or enforce max 4 (constitution wins)? |
+| Vote changes      | "allowed but tracked" (Principle VII) | "cannot change vote" (FR-016) | **CLARIFY**: Allow changes with audit trail or prohibit entirely?      |
 
 **Decision**: Proceeding with **spec requirements** (2-5 vote options, no vote changes) as spec is more recent and explicit. Constitution will be amended post-MVP if governance requires vote change tracking.
 
@@ -183,7 +191,7 @@ packages/eslint-config/                    # Shared linting (existing)
 
 ## Complexity Tracking
 
-*No violations detected. All constitution principles satisfied with noted discrepancies resolved via spec precedence.*
+_No violations detected. All constitution principles satisfied with noted discrepancies resolved via spec precedence._
 
 ---
 

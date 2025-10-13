@@ -49,13 +49,14 @@ All items pass except for the one clarification marker remaining in edge cases.
 
 **Suggested Resolution Options**:
 
-| Option | Answer                                      | Implications                                                                 |
-|--------|---------------------------------------------|------------------------------------------------------------------------------|
-| A      | Soft delete (archive) polls with vote data  | Preserves analytics, allows potential poll restoration, no data loss        |
-| B      | Hard delete polls but preserve vote metrics | Removes poll content, keeps aggregate stats, partial analytics capability   |
-| C      | Hard delete everything including vote data  | Clean removal, no analytics historical data, simplest implementation        |
+| Option | Answer                                      | Implications                                                              |
+| ------ | ------------------------------------------- | ------------------------------------------------------------------------- |
+| A      | Soft delete (archive) polls with vote data  | Preserves analytics, allows potential poll restoration, no data loss      |
+| B      | Hard delete polls but preserve vote metrics | Removes poll content, keeps aggregate stats, partial analytics capability |
+| C      | Hard delete everything including vote data  | Clean removal, no analytics historical data, simplest implementation      |
 
 **Recommendation**: Option A (soft delete) aligns with:
+
 - Assumption A-005 already states "Soft delete is preferred for polls and comments"
 - Analytics dashboard requirements (FR-038 to FR-042) need historical data
 - Reddit-style platforms typically archive rather than destroy content

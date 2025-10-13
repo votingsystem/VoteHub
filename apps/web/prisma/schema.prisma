@@ -1,0 +1,198 @@
+// apps/web/prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL") // For migrations
+}
+
+// ============================================================================
+// User & Authentication
+// ============================================================================
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String   // Hashed via BetterAuth
+  username  String   @unique
+  role      UserRole @default(VOTER)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  polls        Poll[]
+  votes        Vote[]
+  comments     Comment[]
+  createdTags  Tag[]      @relation("TagCreator")
+
+  // BetterAuth session tracking (managed by library)
+  sessions     Session[]
+
+  @@index([email])
+  @@index([username])
+}
+
+enum UserRole {
+  ADMIN  // Can create polls, manage tags, access analytics
+  VOTER  // Can vote and comment
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+// ============================================================================
+// Tag System
+// ============================================================================
+
+model Tag {
+  id   String @id @default(cuid())
+  name String @unique // Display name: "Politics", "Technology"
+  slug String @unique // URL-friendly: "politics", "technology"
+
+  // Creator tracking
+  createdBy String
+  creator   User     @relation("TagCreator", fields: [createdBy], references: [id])
+  createdAt DateTime @default(now())
+
+  // Relations
+  polls Poll[]
+
+  @@index([slug]) // For filtering by tag
+}
+
+// ============================================================================
+// Poll System
+// ============================================================================
+
+model Poll {
+  id          String     @id @default(cuid())
+  title       String     // 5-200 chars (validated in app layer)
+  description String     @db.Text // Up to 5000 chars
+  link        String?    // Optional external link
+
+  // Scheduling
+  startAt       DateTime
+  durationHours Int      // 1-8760 hours (1 hour to 365 days)
+  endAt         DateTime // Computed: startAt + durationHours
+  status        PollStatus @default(SCHEDULED)
+
+  // Author
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id])
+
+  // Categorization
+  tagId String
+  tag   Tag    @relation(fields: [tagId], references: [id])
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  options  VotingOption[]
+  votes    Vote[]
+  comments Comment[]
+
+  // Indexes for performance
+  @@index([status, createdAt]) // Feed queries (active polls, newest first)
+  @@index([tagId, status])     // Tag filtering
+  @@index([authorId])          // User's created polls
+  @@index([startAt])           // Scheduled poll queries
+  @@index([endAt])             // Poll expiration checks
+}
+
+enum PollStatus {
+  SCHEDULED // Before startAt
+  ACTIVE    // Between startAt and endAt
+  CLOSED    // After endAt or manually unpublished
+}
+
+model VotingOption {
+  id    String @id @default(cuid())
+  label String // 1-100 chars, e.g., "Strongly Agree", "Neutral"
+  order Int    // Display order (0-4 for 2-5 options)
+
+  pollId String
+  poll   Poll   @relation(fields: [pollId], references: [id], onDelete: Cascade)
+
+  // Relations
+  votes Vote[]
+
+  @@index([pollId])
+  @@unique([pollId, order]) // Ensure unique ordering within poll
+}
+
+// ============================================================================
+// Voting System
+// ============================================================================
+
+model Vote {
+  id String @id @default(cuid())
+
+  // Voter
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Poll
+  pollId String
+  poll   Poll   @relation(fields: [pollId], references: [id], onDelete: Cascade)
+
+  // Selected option
+  optionId String
+  option   VotingOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+
+  // Timestamp
+  createdAt DateTime @default(now())
+
+  // CRITICAL: One vote per user per poll (vote integrity)
+  @@unique([userId, pollId])
+
+  // Indexes for aggregation queries
+  @@index([pollId, createdAt])    // Vote trends over time
+  @@index([pollId, optionId])     // Vote distribution per option
+  @@index([userId])               // User's voting history
+}
+
+// ============================================================================
+// Comment System
+// ============================================================================
+
+model Comment {
+  id   String @id @default(cuid())
+  text String @db.Text // Comment content
+
+  // Author
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  // Poll
+  pollId String
+  poll   Poll   @relation(fields: [pollId], references: [id], onDelete: Cascade)
+
+  // Threading (self-referential for nested replies)
+  parentId String?
+  parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies  Comment[] @relation("CommentReplies")
+
+  // Timestamp
+  createdAt DateTime @default(now())
+
+  // Indexes for threading and sorting
+  @@index([pollId, createdAt]) // Poll's comments sorted by newest
+  @@index([pollId, parentId])  // Top-level vs. nested comments
+  @@index([authorId])          // User's comment history
+  @@index([parentId])          // Fetching nested replies
+}

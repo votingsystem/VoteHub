@@ -15,7 +15,7 @@
 - Q: What can non-authenticated (anonymous) users see? → A: Feed + poll details + vote results + comments (full read access, just can't vote/comment)
 - Q: What time units should poll duration support? → A: Hours only (e.g., "24 hours", "168 hours")
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - View and Vote on Active Polls (Priority: P1)
 
@@ -136,7 +136,7 @@ An administrator accesses a dashboard showing voting trends, participation rates
 - **What happens when a poll's duration ends while a user is in the middle of voting?** If vote submits after expiration, validation fails with "Poll has ended" message
 - **What happens if a user navigates away mid-comment?** Draft comments are not saved (standard web behavior; auto-save is out of scope for MVP)
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -230,7 +230,7 @@ An administrator accesses a dashboard showing voting trends, participation rates
 - **Comment**: Represents a comment on a poll. Attributes: unique ID, poll reference, user reference (author), parent comment reference (null for top-level, comment ID for replies), comment text, timestamp
 - **Tag/Category**: Represents a classification for polls. Attributes: unique ID, name, slug (URL-friendly), created by (admin user reference), creation timestamp. A predefined set exists at system initialization; administrators can add new tags through admin panel. Used for filtering and organization
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

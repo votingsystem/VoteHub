@@ -17,12 +17,14 @@ VoteHub exposes a REST API via Next.js Server Actions and API routes. This docum
 All authenticated endpoints require a valid session cookie from BetterAuth.
 
 **Session Management**:
+
 - Login: `POST /api/auth/login`
 - Register: `POST /api/auth/register`
 - Logout: `POST /api/auth/logout`
 - Session check: `GET /api/auth/session`
 
 **Authorization**:
+
 - **Admin-only endpoints**: Check `session.user.role === 'ADMIN'`
 - **Authenticated endpoints**: Check `session !== null`
 - **Public endpoints**: No auth required (feed, poll details, vote results, comments)
@@ -44,6 +46,7 @@ All endpoints return consistent error format:
 ```
 
 **HTTP Status Codes**:
+
 - `200 OK`: Success
 - `201 Created`: Resource created
 - `400 Bad Request`: Validation error
@@ -57,33 +60,33 @@ All endpoints return consistent error format:
 
 ## Endpoints Summary
 
-| Method | Endpoint | Auth | Role | Description |
-|--------|----------|------|------|-------------|
-| **Polls** |
-| GET | `/api/polls` | Optional | Any | List polls with filters/sort |
-| POST | `/api/polls` | Required | Admin | Create new poll |
-| GET | `/api/polls/:id` | Optional | Any | Get poll details + vote results |
-| PATCH | `/api/polls/:id` | Required | Admin | Update poll (before voting starts) |
-| DELETE | `/api/polls/:id` | Required | Admin | Delete poll (only if no votes) |
-| POST | `/api/polls/:id/unpublish` | Required | Admin | Unpublish/close poll |
-| **Voting** |
-| POST | `/api/polls/:id/vote` | Required | Any | Submit vote |
-| GET | `/api/polls/:id/results` | Optional | Any | Get vote results |
-| GET | `/api/polls/:id/my-vote` | Required | Any | Get user's vote on poll |
-| **Comments** |
-| GET | `/api/polls/:id/comments` | Optional | Any | Get poll comments (threaded) |
-| POST | `/api/comments` | Required | Any | Add comment/reply |
-| DELETE | `/api/comments/:id` | Required | Author/Admin | Delete comment |
-| **Tags** |
-| GET | `/api/tags` | Optional | Any | List all tags |
-| POST | `/api/tags` | Required | Admin | Create new tag |
-| **Users** |
-| GET | `/api/users/:username` | Optional | Any | Get user profile |
-| GET | `/api/users/:username/comments` | Optional | Any | Get user's comment history |
+| Method                     | Endpoint                        | Auth     | Role         | Description                        |
+| -------------------------- | ------------------------------- | -------- | ------------ | ---------------------------------- |
+| **Polls**                  |
+| GET                        | `/api/polls`                    | Optional | Any          | List polls with filters/sort       |
+| POST                       | `/api/polls`                    | Required | Admin        | Create new poll                    |
+| GET                        | `/api/polls/:id`                | Optional | Any          | Get poll details + vote results    |
+| PATCH                      | `/api/polls/:id`                | Required | Admin        | Update poll (before voting starts) |
+| DELETE                     | `/api/polls/:id`                | Required | Admin        | Delete poll (only if no votes)     |
+| POST                       | `/api/polls/:id/unpublish`      | Required | Admin        | Unpublish/close poll               |
+| **Voting**                 |
+| POST                       | `/api/polls/:id/vote`           | Required | Any          | Submit vote                        |
+| GET                        | `/api/polls/:id/results`        | Optional | Any          | Get vote results                   |
+| GET                        | `/api/polls/:id/my-vote`        | Required | Any          | Get user's vote on poll            |
+| **Comments**               |
+| GET                        | `/api/polls/:id/comments`       | Optional | Any          | Get poll comments (threaded)       |
+| POST                       | `/api/comments`                 | Required | Any          | Add comment/reply                  |
+| DELETE                     | `/api/comments/:id`             | Required | Author/Admin | Delete comment                     |
+| **Tags**                   |
+| GET                        | `/api/tags`                     | Optional | Any          | List all tags                      |
+| POST                       | `/api/tags`                     | Required | Admin        | Create new tag                     |
+| **Users**                  |
+| GET                        | `/api/users/:username`          | Optional | Any          | Get user profile                   |
+| GET                        | `/api/users/:username/comments` | Optional | Any          | Get user's comment history         |
 | **Analytics** (Admin only) |
-| GET | `/api/analytics/overview` | Required | Admin | Aggregate stats |
-| GET | `/api/analytics/polls/:id` | Required | Admin | Poll-level analytics |
-| GET | `/api/analytics/trends` | Required | Admin | Voting trends over time |
+| GET                        | `/api/analytics/overview`       | Required | Admin        | Aggregate stats                    |
+| GET                        | `/api/analytics/polls/:id`      | Required | Admin        | Poll-level analytics               |
+| GET                        | `/api/analytics/trends`         | Required | Admin        | Voting trends over time            |
 
 ---
 
@@ -98,6 +101,7 @@ All endpoints return consistent error format:
 **Authentication**: Optional (public endpoint)
 
 **Query Parameters**:
+
 ```typescript
 {
   cursor?: string         // Pagination cursor (poll ID)
@@ -109,6 +113,7 @@ All endpoints return consistent error format:
 ```
 
 **Response** (`200 OK`):
+
 ```json
 {
   "polls": [
@@ -142,6 +147,7 @@ All endpoints return consistent error format:
 ```
 
 **Example Usage**:
+
 ```bash
 # Get newest polls
 GET /api/polls?sort=newest&limit=20
@@ -163,6 +169,7 @@ GET /api/polls?cursor=cm456def&limit=20
 **Authorization**: Admin role only
 
 **Request Body**:
+
 ```json
 {
   "title": "Should AI development be regulated?",
@@ -181,6 +188,7 @@ GET /api/polls?cursor=cm456def&limit=20
 ```
 
 **Validation**:
+
 - `title`: 5-200 characters
 - `description`: 10-5000 characters
 - `link`: Valid URL or empty
@@ -189,6 +197,7 @@ GET /api/polls?cursor=cm456def&limit=20
 - `options`: 2-5 items, each label 1-100 characters
 
 **Response** (`201 Created`):
+
 ```json
 {
   "poll": {
@@ -213,6 +222,7 @@ GET /api/polls?cursor=cm456def&limit=20
 ```
 
 **Error Responses**:
+
 - `401 Unauthorized`: Not logged in
 - `403 Forbidden`: Not an admin
 - `400 Bad Request`: Validation failed (invalid duration, too many options, etc.)
@@ -226,6 +236,7 @@ GET /api/polls?cursor=cm456def&limit=20
 **Authentication**: Optional (public endpoint)
 
 **Response** (`200 OK`):
+
 ```json
 {
   "poll": {
@@ -273,6 +284,7 @@ GET /api/polls?cursor=cm456def&limit=20
 ```
 
 **Error Responses**:
+
 - `404 Not Found`: Poll doesn't exist
 
 ---
@@ -285,6 +297,7 @@ GET /api/polls?cursor=cm456def&limit=20
 **Authorization**: Admin role only
 
 **Request Body** (all fields optional):
+
 ```json
 {
   "title": "Updated poll title",
@@ -297,13 +310,17 @@ GET /api/polls?cursor=cm456def&limit=20
 ```
 
 **Response** (`200 OK`):
+
 ```json
 {
-  "poll": { /* Updated poll object */ }
+  "poll": {
+    /* Updated poll object */
+  }
 }
 ```
 
 **Error Responses**:
+
 - `400 Bad Request`: Poll already has votes (immutable)
 - `403 Forbidden`: Not an admin or not poll author
 - `404 Not Found`: Poll doesn't exist
@@ -318,6 +335,7 @@ GET /api/polls?cursor=cm456def&limit=20
 **Authorization**: Admin role only
 
 **Response** (`200 OK`):
+
 ```json
 {
   "message": "Poll deleted successfully"
@@ -325,6 +343,7 @@ GET /api/polls?cursor=cm456def&limit=20
 ```
 
 **Error Responses**:
+
 - `409 Conflict`: Poll has votes (cannot delete, use unpublish instead)
 - `403 Forbidden`: Not an admin
 - `404 Not Found`: Poll doesn't exist
@@ -339,11 +358,12 @@ GET /api/polls?cursor=cm456def&limit=20
 **Authorization**: Admin role only
 
 **Response** (`200 OK`):
+
 ```json
 {
   "poll": {
     "id": "cm789poll",
-    "status": "closed",
+    "status": "closed"
     // ... other fields
   }
 }
@@ -360,6 +380,7 @@ GET /api/polls?cursor=cm456def&limit=20
 **Authentication**: Required
 
 **Request Body**:
+
 ```json
 {
   "optionId": "opt2"
@@ -367,6 +388,7 @@ GET /api/polls?cursor=cm456def&limit=20
 ```
 
 **Response** (`201 Created`):
+
 ```json
 {
   "vote": {
@@ -388,12 +410,14 @@ GET /api/polls?cursor=cm456def&limit=20
 ```
 
 **Error Responses**:
+
 - `401 Unauthorized`: Not logged in
 - `400 Bad Request`: Invalid optionId or poll not active
 - `409 Conflict`: User has already voted on this poll
 - `404 Not Found`: Poll or option doesn't exist
 
 **Business Rules Enforced**:
+
 - Poll must be in ACTIVE status (between startAt and endAt)
 - User can only vote once per poll (database constraint)
 - Vote cannot be changed after submission
@@ -407,6 +431,7 @@ GET /api/polls?cursor=cm456def&limit=20
 **Authentication**: Optional (public endpoint)
 
 **Response** (`200 OK`):
+
 ```json
 {
   "pollId": "cm789poll",
@@ -449,6 +474,7 @@ GET /api/polls?cursor=cm456def&limit=20
 **Authentication**: Required
 
 **Response** (`200 OK` if voted):
+
 ```json
 {
   "vote": {
@@ -459,6 +485,7 @@ GET /api/polls?cursor=cm456def&limit=20
 ```
 
 **Response** (`200 OK` if not voted):
+
 ```json
 {
   "vote": null
@@ -476,6 +503,7 @@ GET /api/polls?cursor=cm456def&limit=20
 **Authentication**: Optional (public endpoint)
 
 **Query Parameters**:
+
 ```typescript
 {
   sort?: "newest" | "most-active" // Default: newest
@@ -484,6 +512,7 @@ GET /api/polls?cursor=cm456def&limit=20
 ```
 
 **Response** (`200 OK`):
+
 ```json
 {
   "comments": [
@@ -520,6 +549,7 @@ GET /api/polls?cursor=cm456def&limit=20
 **Authentication**: Required
 
 **Request Body**:
+
 ```json
 {
   "pollId": "cm789poll",
@@ -529,10 +559,12 @@ GET /api/polls?cursor=cm456def&limit=20
 ```
 
 **Validation**:
+
 - `text`: 1-5000 characters
 - `parentId`: Must exist if provided
 
 **Response** (`201 Created`):
+
 ```json
 {
   "comment": {
@@ -547,6 +579,7 @@ GET /api/polls?cursor=cm456def&limit=20
 ```
 
 **Error Responses**:
+
 - `401 Unauthorized`: Not logged in
 - `400 Bad Request`: Text too long or empty
 - `404 Not Found`: Poll or parent comment doesn't exist
@@ -561,6 +594,7 @@ GET /api/polls?cursor=cm456def&limit=20
 **Authorization**: Comment author or Admin
 
 **Response** (`200 OK`):
+
 ```json
 {
   "message": "Comment deleted successfully"
@@ -568,6 +602,7 @@ GET /api/polls?cursor=cm456def&limit=20
 ```
 
 **Error Responses**:
+
 - `403 Forbidden`: Not comment author or admin
 - `404 Not Found`: Comment doesn't exist
 
@@ -584,6 +619,7 @@ GET /api/polls?cursor=cm456def&limit=20
 **Authentication**: Optional (public endpoint)
 
 **Response** (`200 OK`):
+
 ```json
 {
   "tags": [
@@ -613,6 +649,7 @@ GET /api/polls?cursor=cm456def&limit=20
 **Authorization**: Admin role only
 
 **Request Body**:
+
 ```json
 {
   "name": "Climate Change"
@@ -620,9 +657,11 @@ GET /api/polls?cursor=cm456def&limit=20
 ```
 
 **Validation**:
+
 - `name`: 2-50 characters, unique
 
 **Response** (`201 Created`):
+
 ```json
 {
   "tag": {
@@ -636,6 +675,7 @@ GET /api/polls?cursor=cm456def&limit=20
 ```
 
 **Error Responses**:
+
 - `403 Forbidden`: Not an admin
 - `409 Conflict`: Tag name/slug already exists
 
@@ -650,6 +690,7 @@ GET /api/polls?cursor=cm456def&limit=20
 **Authentication**: Optional (public endpoint)
 
 **Response** (`200 OK`):
+
 ```json
 {
   "user": {
@@ -666,6 +707,7 @@ GET /api/polls?cursor=cm456def&limit=20
 ```
 
 **Error Responses**:
+
 - `404 Not Found`: User doesn't exist
 
 ---
@@ -677,6 +719,7 @@ GET /api/polls?cursor=cm456def&limit=20
 **Authentication**: Optional (public endpoint)
 
 **Query Parameters**:
+
 ```typescript
 {
   limit?: number // Default: 20
@@ -685,6 +728,7 @@ GET /api/polls?cursor=cm456def&limit=20
 ```
 
 **Response** (`200 OK`):
+
 ```json
 {
   "comments": [
@@ -717,6 +761,7 @@ GET /api/polls?cursor=cm456def&limit=20
 **Authorization**: Admin role only
 
 **Response** (`200 OK`):
+
 ```json
 {
   "overview": {
@@ -744,6 +789,7 @@ GET /api/polls?cursor=cm456def&limit=20
 **Authorization**: Admin role only
 
 **Response** (`200 OK`):
+
 ```json
 {
   "poll": {
@@ -777,6 +823,7 @@ GET /api/polls?cursor=cm456def&limit=20
 **Authorization**: Admin role only
 
 **Query Parameters**:
+
 ```typescript
 {
   range?: "7d" | "30d" | "all" // Default: 30d
@@ -784,12 +831,13 @@ GET /api/polls?cursor=cm456def&limit=20
 ```
 
 **Response** (`200 OK`):
+
 ```json
 {
   "trends": {
     "dailyVotes": [
       { "date": "2025-10-01", "votes": 45 },
-      { "date": "2025-10-02", "votes": 62 },
+      { "date": "2025-10-02", "votes": 62 }
       // ... more days
     ],
     "topPolls": [
@@ -811,6 +859,7 @@ GET /api/polls?cursor=cm456def&limit=20
 **Policy**: 100 requests per minute per authenticated user, 20 requests per minute per IP for anonymous users.
 
 **Headers**:
+
 ```
 X-RateLimit-Limit: 100
 X-RateLimit-Remaining: 95
@@ -818,6 +867,7 @@ X-RateLimit-Reset: 1696877400
 ```
 
 **Error Response** (`429 Too Many Requests`):
+
 ```json
 {
   "error": {
@@ -839,6 +889,7 @@ X-RateLimit-Reset: 1696877400
 - **Analytics**: No caching (always fresh data for admins)
 
 **Cache Headers**:
+
 ```
 Cache-Control: public, s-maxage=30, stale-while-revalidate=60
 ```
@@ -848,6 +899,7 @@ Cache-Control: public, s-maxage=30, stale-while-revalidate=60
 ## Summary
 
 This API contract supports all VoteHub functional requirements:
+
 - ✅ Poll CRUD operations (admin only for create/edit)
 - ✅ Voting system with integrity enforcement
 - ✅ Threaded comment system

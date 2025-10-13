@@ -75,6 +75,7 @@ NEXT_PUBLIC_APP_URL="http://localhost:3000"
 ```
 
 **Generate secrets**:
+
 ```bash
 openssl rand -base64 32
 ```
@@ -96,6 +97,7 @@ npx prisma db seed
 ```
 
 **Default Admin Credentials** (created by seed):
+
 - Email: `admin@votehub.com`
 - Password: `admin123`
 - **⚠️ CHANGE IN PRODUCTION**
@@ -111,6 +113,7 @@ cd apps/web && pnpm dev
 ```
 
 **Servers started**:
+
 - Web app: http://localhost:3000
 - Turbopack dev server (faster builds)
 
@@ -121,6 +124,7 @@ cd apps/web && pnpm dev
 ### Creating a New Poll (Admin)
 
 1. **Login as Admin**
+
    ```
    Navigate to: http://localhost:3000/login
    Email: admin@votehub.com
@@ -128,6 +132,7 @@ cd apps/web && pnpm dev
    ```
 
 2. **Access Admin Panel**
+
    ```
    Navigate to: http://localhost:3000/admin/polls/new
    ```
@@ -147,12 +152,14 @@ cd apps/web && pnpm dev
 ### Voting as User
 
 1. **Register User Account**
+
    ```
    Navigate to: http://localhost:3000/register
    Create account (automatically assigned "voter" role)
    ```
 
 2. **Browse Feed**
+
    ```
    Navigate to: http://localhost:3000
    View active polls
@@ -172,6 +179,7 @@ cd apps/web && pnpm dev
 ### Adding Comments
 
 1. **View Poll Details**
+
    ```
    Click any poll card to open detail page
    ```
@@ -190,6 +198,7 @@ cd apps/web && pnpm dev
 ### Managing Tags (Admin)
 
 1. **View Tags**
+
    ```
    Navigate to: http://localhost:3000/admin/tags
    ```
@@ -219,18 +228,21 @@ pnpm test          # Web app tests only
 ### Test Categories
 
 1. **Unit Tests** (services, utilities)
+
    ```bash
    # Test vote service
    pnpm test services/vote-service.test.ts
    ```
 
 2. **Integration Tests** (Server Actions, database)
+
    ```bash
    # Test voting flow
    pnpm test actions/vote-actions.test.ts
    ```
 
 3. **E2E Tests** (Playwright)
+
    ```bash
    # Install Playwright
    npx playwright install
@@ -357,15 +369,15 @@ Components are added to `packages/ui/src/components/ui/` automatically.
 
 ```tsx
 // In apps/web/app/... component
-import { Button } from "@workspace/ui/components/button"
-import { Card } from "@workspace/ui/components/card"
+import { Button } from "@workspace/ui/components/button";
+import { Card } from "@workspace/ui/components/card";
 
 export default function MyPage() {
   return (
     <Card>
       <Button>Click Me</Button>
     </Card>
-  )
+  );
 }
 ```
 
@@ -383,10 +395,10 @@ export default function MyPage() {
 
 ```typescript
 // Add console.log in Server Actions
-"use server"
+"use server";
 
 export async function submitVote(formData: FormData) {
-  console.log("Vote submission:", Object.fromEntries(formData))
+  console.log("Vote submission:", Object.fromEntries(formData));
   // ... rest of action
 }
 ```
@@ -399,13 +411,14 @@ Logs appear in **terminal**, not browser console.
 // Enable query logging
 // apps/web/lib/prisma.ts
 export const prisma = new PrismaClient({
-  log: ['query', 'info', 'warn', 'error']
-})
+  log: ["query", "info", "warn", "error"],
+});
 ```
 
 ### React DevTools
 
 Install browser extension:
+
 - Chrome: React Developer Tools
 - Firefox: React Developer Tools
 
@@ -418,6 +431,7 @@ Inspect component tree, props, state.
 ### Issue: `pnpm install` fails
 
 **Solution**:
+
 ```bash
 # Clear cache
 pnpm store prune
@@ -431,6 +445,7 @@ pnpm install
 ### Issue: Database connection error
 
 **Solution**:
+
 ```bash
 # Check DATABASE_URL in .env
 # Ensure PostgreSQL is running (if local)
@@ -443,6 +458,7 @@ psql $DATABASE_URL -c "SELECT 1"
 ### Issue: Prisma migration fails
 
 **Solution**:
+
 ```bash
 # Reset database (WARNING: deletes data)
 npx prisma migrate reset
@@ -454,6 +470,7 @@ npx prisma migrate resolve --rolled-back <migration-name>
 ### Issue: Port 3000 already in use
 
 **Solution**:
+
 ```bash
 # Find process using port
 lsof -i :3000
@@ -468,6 +485,7 @@ PORT=3001 pnpm dev
 ### Issue: TypeScript errors after adding component
 
 **Solution**:
+
 ```bash
 # Regenerate Prisma client
 cd apps/web
@@ -511,6 +529,7 @@ Runs production server on http://localhost:3000
 4. Deploy
 
 Vercel auto-detects:
+
 - Next.js 15
 - pnpm workspace
 - Turborepo build caching

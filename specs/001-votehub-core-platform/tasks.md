@@ -10,12 +10,15 @@
 **Organization**: Tasks grouped by user story to enable independent implementation and testing of each story.
 
 ## Format: `[ID] [P?] [Story] Description`
+
 - **[P]**: Can run in parallel (different files, no dependencies)
 - **[Story]**: Which user story this task belongs to (US1, US2, US3, etc.)
 - Include exact file paths in descriptions
 
 ## Path Conventions
+
 Tasks use the existing monorepo structure:
+
 - **Web app**: `apps/web/` (Next.js 15 application)
 - **Shared UI**: `packages/ui/` (component library)
 - **Config**: `packages/typescript-config/`, `packages/eslint-config/`
@@ -26,9 +29,9 @@ Tasks use the existing monorepo structure:
 
 **Purpose**: Project initialization and dependencies
 
-- [ ] T001 Install project dependencies via `pnpm install` at repository root
-- [ ] T002 [P] Configure environment variables in `apps/web/.env` (DATABASE_URL, AUTH_SECRET, AUTH_URL, NEXT_PUBLIC_APP_URL per quickstart.md)
-- [ ] T003 [P] Verify Supabase connection or setup local PostgreSQL database
+- [x] T001 Install project dependencies via `pnpm install` at repository root
+- [x] T002 [P] Configure environment variables in `apps/web/.env` (DATABASE_URL, AUTH_SECRET, AUTH_URL, NEXT_PUBLIC_APP_URL per quickstart.md)
+- [x] T003 [P] Verify Supabase connection or setup local PostgreSQL database
 
 ---
 
@@ -40,46 +43,46 @@ Tasks use the existing monorepo structure:
 
 ### Database & ORM Setup
 
-- [ ] T004 Create Prisma schema in `apps/web/prisma/schema.prisma` with all entities from data-model.md (User, Poll, VotingOption, Vote, Comment, Tag, Session)
-- [ ] T005 Configure Prisma client singleton in `apps/web/lib/prisma.ts` with connection pooling logic
-- [ ] T006 Run initial Prisma migration: `npx prisma migrate dev --name init` from apps/web
-- [ ] T007 Create seed script in `apps/web/prisma/seed.ts` (admin user: admin@votehub.com/admin123, default tags per research.md)
-- [ ] T008 Run seed: `npx prisma db seed` from apps/web to populate initial data
+- [x] T004 Create Prisma schema in `apps/web/prisma/schema.prisma` with all entities from data-model.md (User, Poll, VotingOption, Vote, Comment, Tag, Session)
+- [x] T005 Configure Prisma client singleton in `apps/web/lib/prisma.ts` with connection pooling logic
+- [x] T006 Run initial Prisma migration: `npx prisma migrate dev --name init` from apps/web (completed manually)
+- [x] T007 Create seed script in `apps/web/prisma/seed.ts` (admin user: admin@votehub.com/admin123, default tags per research.md)
+- [x] T008 Run seed: `npx prisma db seed` from apps/web to populate initial data
 
 ### Authentication Framework
 
-- [ ] T009 Install BetterAuth: `pnpm add better-auth` in apps/web
-- [ ] T010 Configure BetterAuth in `apps/web/lib/auth.ts` with email/password provider, session management, role field (admin/voter)
-- [ ] T011 Create auth Server Actions in `apps/web/actions/auth-actions.ts` (login, register, logout functions)
-- [ ] T012 Create login page in `apps/web/app/(auth)/login/page.tsx` with email/password form using Server Action
-- [ ] T013 Create register page in `apps/web/app/(auth)/register/page.tsx` (auto-assigns voter role)
-- [ ] T014 Create auth layout in `apps/web/app/(auth)/layout.tsx` for auth pages styling
+- [x] T009 Install BetterAuth: `pnpm add better-auth` in apps/web
+- [x] T010 Configure BetterAuth in `apps/web/lib/auth.ts` with email/password provider, session management, role field (admin/voter)
+- [x] T011 Create auth Server Actions in `apps/web/actions/auth-actions.ts` (login, register, logout functions)
+- [x] T012 Create login page in `apps/web/app/(auth)/login/page.tsx` with email/password form using Server Action
+- [x] T013 Create register page in `apps/web/app/(auth)/register/page.tsx` (auto-assigns voter role)
+- [x] T014 Create auth layout in `apps/web/app/(auth)/layout.tsx` for auth pages styling
 
 ### Core UI Components (shadcn/ui)
 
-- [ ] T015 [P] Add Button component: `pnpm dlx shadcn@latest add button -c apps/web`
-- [ ] T016 [P] Add Card component: `pnpm dlx shadcn@latest add card -c apps/web`
-- [ ] T017 [P] Add Form component: `pnpm dlx shadcn@latest add form -c apps/web`
-- [ ] T018 [P] Add Dialog component: `pnpm dlx shadcn@latest add dialog -c apps/web`
-- [ ] T019 [P] Add Badge component: `pnpm dlx shadcn@latest add badge -c apps/web`
-- [ ] T020 [P] Add Select component: `pnpm dlx shadcn@latest add select -c apps/web`
-- [ ] T021 [P] Add Input component: `pnpm dlx shadcn@latest add input -c apps/web`
-- [ ] T022 [P] Add Textarea component: `pnpm dlx shadcn@latest add textarea -c apps/web`
+- [x] T015 [P] Add Button component: `pnpm dlx shadcn@latest add button -c apps/web`
+- [x] T016 [P] Add Card component: `pnpm dlx shadcn@latest add card -c apps/web`
+- [x] T017 [P] Add Form component: `pnpm dlx shadcn@latest add form -c apps/web`
+- [x] T018 [P] Add Dialog component: `pnpm dlx shadcn@latest add dialog -c apps/web`
+- [x] T019 [P] Add Badge component: `pnpm dlx shadcn@latest add badge -c apps/web`
+- [x] T020 [P] Add Select component: `pnpm dlx shadcn@latest add select -c apps/web`
+- [x] T021 [P] Add Input component: `pnpm dlx shadcn@latest add input -c apps/web`
+- [x] T022 [P] Add Textarea component: `pnpm dlx shadcn@latest add textarea -c apps/web`
 
 ### Type Definitions & Validation
 
-- [ ] T023 [P] Create Poll types in `apps/web/types/poll.ts` (Poll, VotingOption, PollStatus enum)
-- [ ] T024 [P] Create Vote types in `apps/web/types/vote.ts` (Vote, VoteResult)
-- [ ] T025 [P] Create User types in `apps/web/types/user.ts` (User, UserRole enum)
-- [ ] T026 [P] Create Comment types in `apps/web/types/comment.ts` (Comment)
-- [ ] T027 Create Zod validation schemas in `apps/web/lib/validations.ts` (voteSubmissionSchema, pollCreationSchema per research.md)
+- [x] T023 [P] Create Poll types in `apps/web/types/poll.ts` (Poll, VotingOption, PollStatus enum)
+- [x] T024 [P] Create Vote types in `apps/web/types/vote.ts` (Vote, VoteResult)
+- [x] T025 [P] Create User types in `apps/web/types/user.ts` (User, UserRole enum)
+- [x] T026 [P] Create Comment types in `apps/web/types/comment.ts` (Comment)
+- [x] T027 Create Zod validation schemas in `apps/web/lib/validations.ts` (voteSubmissionSchema, pollCreationSchema per research.md)
 
 ### Theme & Layout
 
-- [ ] T028 Create theme provider in `apps/web/components/providers.tsx` (next-themes, Reddit-inspired dark/light)
-- [ ] T029 Create main navigation in `apps/web/components/nav.tsx` (logo, login/register/logout, admin link if admin role)
-- [ ] T030 Create main layout in `apps/web/app/(main)/layout.tsx` (includes nav, theme provider)
-- [ ] T031 Update root layout in `apps/web/app/layout.tsx` to wrap with providers
+- [x] T028 Create theme provider in `apps/web/components/providers.tsx` (next-themes, Reddit-inspired dark/light)
+- [x] T029 Create main navigation in `apps/web/components/nav.tsx` (logo, login/register/logout, admin link if admin role)
+- [x] T030 Create main layout in `apps/web/app/(main)/layout.tsx` (includes nav, theme provider)
+- [x] T031 Update root layout in `apps/web/app/layout.tsx` to wrap with providers
 
 **Checkpoint**: Foundation ready - all user stories can now be implemented in parallel
 
@@ -93,32 +96,32 @@ Tasks use the existing monorepo structure:
 
 ### Backend - Poll & Vote Services
 
-- [ ] T032 [P] [US1] Create poll service in `apps/web/services/poll-service.ts` (getPollWithStatus, getActivePolls, getPollById methods from research.md)
-- [ ] T033 [P] [US1] Create vote service in `apps/web/services/vote-service.ts` (submitVote with unique constraint check, getVoteResults, getUserVote methods)
+- [x] T032 [P] [US1] Create poll service in `apps/web/services/poll-service.ts` (getPollWithStatus, getActivePolls, getPollById methods from research.md)
+- [x] T033 [P] [US1] Create vote service in `apps/web/services/vote-service.ts` (submitVote with unique constraint check, getVoteResults, getUserVote methods)
 
 ### Backend - Server Actions
 
-- [ ] T034 [US1] Create vote Server Actions in `apps/web/actions/vote-actions.ts` (submitVote with Zod validation, revalidatePath per research.md)
+- [x] T034 [US1] Create vote Server Actions in `apps/web/actions/vote-actions.ts` (submitVote with Zod validation, revalidatePath per research.md)
 
 ### Frontend - Custom Voting Components
 
-- [ ] T035 [P] [US1] Create PollCard component in `packages/ui/src/components/voting/poll-card.tsx` (Reddit-style card with compact/expanded views, vote count, metadata)
-- [ ] T036 [P] [US1] Create VoteOptions component in `packages/ui/src/components/voting/vote-options.tsx` (radio inputs, Server Action form, optimistic UI per research.md)
-- [ ] T037 [P] [US1] Create VoteResults component in `packages/ui/src/components/voting/vote-results.tsx` (colored bars, percentages, vote counts)
+- [x] T035 [P] [US1] Create PollCard component in `packages/ui/src/components/voting/poll-card.tsx` (Reddit-style card with compact/expanded views, vote count, metadata)
+- [x] T036 [P] [US1] Create VoteOptions component in `packages/ui/src/components/voting/vote-options.tsx` (radio inputs, Server Action form, optimistic UI per research.md)
+- [x] T037 [P] [US1] Create VoteResults component in `packages/ui/src/components/voting/vote-results.tsx` (colored bars, percentages, vote counts)
 
 ### Frontend - Poll Feed & Detail Pages
 
-- [ ] T038 [US1] Create poll feed page in `apps/web/app/(main)/page.tsx` (Server Component, fetch active polls, map to PollCard components, show newest first)
-- [ ] T039 [US1] Create poll detail page in `apps/web/app/(main)/poll/[id]/page.tsx` (Server Component, fetch poll + vote results + user's vote, render VoteOptions if not voted, else show VoteResults)
-- [ ] T040 [P] [US1] Create poll loading state in `apps/web/app/(main)/poll/[id]/loading.tsx` (skeleton UI)
-- [ ] T041 [P] [US1] Create poll error boundary in `apps/web/app/(main)/poll/[id]/error.tsx` (error handling)
+- [x] T038 [US1] Create poll feed page in `apps/web/app/(main)/page.tsx` (Server Component, fetch active polls, map to PollCard components, show newest first)
+- [x] T039 [US1] Create poll detail page in `apps/web/app/(main)/poll/[id]/page.tsx` (Server Component, fetch poll + vote results + user's vote, render VoteOptions if not voted, else show VoteResults)
+- [x] T040 [P] [US1] Create poll loading state in `apps/web/app/(main)/poll/[id]/loading.tsx` (skeleton UI)
+- [x] T041 [P] [US1] Create poll error boundary in `apps/web/app/(main)/poll/[id]/error.tsx` (error handling)
 
 ### Integration & Validation
 
-- [ ] T042 [US1] Verify poll status transitions (SCHEDULED → ACTIVE → CLOSED) in poll service based on current time vs startAt/endAt
-- [ ] T043 [US1] Verify vote integrity: database constraint prevents duplicate votes (test by attempting second vote, should fail with 409 Conflict)
-- [ ] T044 [US1] Verify vote submission triggers optimistic UI update then revalidation (immediate feedback, then server confirmation)
-- [ ] T045 [US1] Verify expired polls show results but disable voting (check endAt < now condition)
+- [x] T042 [US1] Verify poll status transitions (SCHEDULED → ACTIVE → CLOSED) in poll service based on current time vs startAt/endAt
+- [x] T043 [US1] Verify vote integrity: database constraint prevents duplicate votes (test by attempting second vote, should fail with 409 Conflict)
+- [x] T044 [US1] Verify vote submission triggers optimistic UI update then revalidation (immediate feedback, then server confirmation)
+- [x] T045 [US1] Verify expired polls show results but disable voting (check endAt < now condition)
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently. Voters can view polls and vote.
 
@@ -132,34 +135,34 @@ Tasks use the existing monorepo structure:
 
 ### Backend - Poll Management Services
 
-- [ ] T046 [P] [US2] Create tag service in `apps/web/services/tag-service.ts` (getTags, createTag methods)
-- [ ] T047 [P] [US2] Extend poll service in `apps/web/services/poll-service.ts` (createPoll, updatePoll, deletePoll, unpublishPoll methods per contracts)
+- [x] T046 [P] [US2] Create tag service in `apps/web/services/tag-service.ts` (getTags, createTag methods)
+- [x] T047 [P] [US2] Extend poll service in `apps/web/services/poll-service.ts` (createPoll, updatePoll, deletePoll, unpublishPoll methods per contracts)
 
 ### Backend - Admin Server Actions
 
-- [ ] T048 [US2] Create poll Server Actions in `apps/web/actions/poll-actions.ts` (createPoll with admin role check, updatePoll, unpublishPoll, revalidateTag('polls'))
-- [ ] T049 [P] [US2] Create tag Server Actions in `apps/web/actions/tag-actions.ts` (createTag with admin role check, getTags)
+- [x] T048 [US2] Create poll Server Actions in `apps/web/actions/poll-actions.ts` (createPoll with admin role check, updatePoll, unpublishPoll, revalidateTag('polls'))
+- [x] T049 [P] [US2] Create tag Server Actions in `apps/web/actions/tag-actions.ts` (createTag with admin role check, getTags)
 
 ### Frontend - Admin Poll Creation
 
-- [ ] T050 [US2] Create admin layout in `apps/web/app/(main)/admin/layout.tsx` (check session.user.role === 'admin', redirect if not)
-- [ ] T051 [US2] Create poll list page in `apps/web/app/(main)/admin/polls/page.tsx` (list all polls by admin, link to create/edit)
-- [ ] T052 [US2] Create poll creation page in `apps/web/app/(main)/admin/polls/new/page.tsx` (form: title, description, link optional, tag select, startAt datetime-local, durationHours number 1-8760, dynamic option inputs 2-5)
-- [ ] T053 [US2] Add dynamic option input logic in poll creation form (add/remove option buttons, validate 2-5 range client-side)
-- [ ] T054 [P] [US2] Create poll edit page in `apps/web/app/(main)/admin/polls/[id]/edit/page.tsx` (pre-fill form, only allow edit if no votes)
+- [x] T050 [US2] Create admin layout in `apps/web/app/(main)/admin/layout.tsx` (check session.user.role === 'admin', redirect if not)
+- [x] T051 [US2] Create poll list page in `apps/web/app/(main)/admin/polls/page.tsx` (list all polls by admin, link to create/edit)
+- [x] T052 [US2] Create poll creation page in `apps/web/app/(main)/admin/polls/new/page.tsx` (form: title, description, link optional, tag select, startAt datetime-local, durationHours number 1-8760, dynamic option inputs 2-5)
+- [x] T053 [US2] Add dynamic option input logic in poll creation form (add/remove option buttons, validate 2-5 range client-side)
+- [x] T054 [P] [US2] Create poll edit page in `apps/web/app/(main)/admin/polls/[id]/edit/page.tsx` (pre-fill form, only allow edit if no votes)
 
 ### Frontend - Tag Management
 
-- [ ] T055 [US2] Create tag management page in `apps/web/app/(main)/admin/tags/page.tsx` (list tags, create new tag form, slug auto-generated)
+- [x] T055 [US2] Create tag management page in `apps/web/app/(main)/admin/tags/page.tsx` (list tags, create new tag form, slug auto-generated)
 
 ### Integration & Validation
 
-- [ ] T056 [US2] Verify admin role enforcement: non-admin cannot access /admin routes (redirect to login or 403)
-- [ ] T057 [US2] Verify poll creation with 2-5 options saves correctly (check VotingOption order field)
-- [ ] T058 [US2] Verify poll appears in feed immediately if startAt <= now, else scheduled (check status field)
-- [ ] T059 [US2] Verify duration calculation: endAt = startAt + durationHours (display endAt on poll card)
-- [ ] T060 [US2] Verify poll deletion blocked if votes exist (attempt delete poll with votes, expect error message per clarifications)
-- [ ] T061 [US2] Verify unpublish/hide functionality for polls with votes (status → CLOSED, hidden from public feed)
+- [x] T056 [US2] Verify admin role enforcement: non-admin cannot access /admin routes (redirect to login or 403)
+- [x] T057 [US2] Verify poll creation with 2-5 options saves correctly (check VotingOption order field)
+- [x] T058 [US2] Verify poll appears in feed immediately if startAt <= now, else scheduled (check status field)
+- [x] T059 [US2] Verify duration calculation: endAt = startAt + durationHours (display endAt on poll card)
+- [x] T060 [US2] Verify poll deletion blocked if votes exist (attempt delete poll with votes, expect error message per clarifications)
+- [x] T061 [US2] Verify unpublish/hide functionality for polls with votes (status → CLOSED, hidden from public feed)
 
 **Checkpoint**: At this point, User Stories 1 AND 2 are fully functional. MVP is complete: admins create polls, voters vote.
 
@@ -173,11 +176,11 @@ Tasks use the existing monorepo structure:
 
 **Deferred for Post-MVP**: Implement after MVP validation. Tasks outline:
 
-- [ ] T062 [US3] Add sort query param support in feed page (sort=newest|most-voted|trending)
-- [ ] T063 [US3] Implement trending algorithm in poll service (time-weighted vote velocity per research.md)
-- [ ] T064 [US3] Add sort dropdown UI in feed page (next to feed title)
-- [ ] T065 [US3] Add tag filter dropdown in feed (fetch all tags, filter polls by tagId query param)
-- [ ] T066 [US3] Add "Clear Filters" button to reset sort/filter
+- [x] T062 [US3] Add sort query param support in feed page (sort=newest|most-voted|trending)
+- [x] T063 [US3] Implement trending algorithm in poll service (time-weighted vote velocity per research.md)
+- [x] T064 [US3] Add sort dropdown UI in feed page (next to feed title)
+- [x] T065 [US3] Add tag filter dropdown in feed (fetch all tags, filter polls by tagId query param)
+- [x] T066 [US3] Add "Clear Filters" button to reset sort/filter
 
 **Checkpoint**: Feed now has enhanced discoverability (still independent of other features)
 
@@ -191,11 +194,11 @@ Tasks use the existing monorepo structure:
 
 **Deferred for Post-MVP**: Implement after MVP validation. Tasks outline:
 
-- [ ] T067 [P] [US4] Create comment service in `apps/web/services/comment-service.ts` (addComment, deleteComment, getComments methods)
-- [ ] T068 [US4] Create comment Server Actions in `apps/web/actions/comment-actions.ts` (addComment, deleteComment)
-- [ ] T069 [P] [US4] Create CommentThread component in `packages/ui/src/components/voting/comment-thread.tsx` (recursive rendering, nested indentation)
-- [ ] T070 [US4] Add comment section to poll detail page (fetch comments with replies, sort options, comment form)
-- [ ] T071 [US4] Implement comment deletion (only author or admin can delete, cascade to replies)
+- [x] T067 [P] [US4] Create comment service in `apps/web/services/comment-service.ts` (addComment, deleteComment, getComments methods)
+- [x] T068 [US4] Create comment Server Actions in `apps/web/actions/comment-actions.ts` (addComment, deleteComment)
+- [x] T069 [P] [US4] Create CommentThread component in `packages/ui/src/components/voting/comment-thread.tsx` (recursive rendering, nested indentation)
+- [x] T070 [US4] Add comment section to poll detail page (fetch comments with replies, sort options, comment form)
+- [x] T071 [US4] Implement comment deletion (only author or admin can delete, cascade to replies)
 
 **Checkpoint**: Polls now support community discussions (independent feature, doesn't break voting)
 
@@ -209,9 +212,9 @@ Tasks use the existing monorepo structure:
 
 **Deferred for Post-MVP**: Implement after MVP validation. Tasks outline:
 
-- [ ] T072 [US5] Create user profile page in `apps/web/app/(main)/user/[username]/page.tsx` (fetch user by username, show join date, comment history)
-- [ ] T073 [US5] Link usernames in nav and comments to profile pages
-- [ ] T074 [US5] Display "No activity yet" message for users without comments
+- [x] T072 [US5] Create user profile page in `apps/web/app/(main)/user/[username]/page.tsx` (fetch user by username, show join date, comment history)
+- [x] T073 [US5] Link usernames in nav and comments to profile pages
+- [x] T074 [US5] Display "No activity yet" message for users without comments
 
 **Checkpoint**: User profiles provide transparency (doesn't affect core voting functionality)
 
@@ -242,11 +245,11 @@ Tasks use the existing monorepo structure:
 - [ ] T080 [P] Test without JavaScript (disable in DevTools): forms should submit via native POST, results should render server-side
 - [ ] T081 [P] Verify WCAG 2.1 AA compliance (color contrast, ARIA labels on interactive elements)
 - [ ] T082 [P] Add error handling: 404 for missing polls, 401/403 for unauthorized access, 409 for duplicate votes
-- [ ] T083 Run full type check: `pnpm typecheck` from repository root (fix any TypeScript errors)
-- [ ] T084 Run lint: `pnpm lint` from repository root (fix any linting issues)
-- [ ] T085 Format code: `pnpm format` from repository root (Prettier)
-- [ ] T086 Create production build: `pnpm build` from repository root (verify no build errors)
-- [ ] T087 Test production build locally: `cd apps/web && pnpm start` (verify functionality matches dev)
+- [x] T083 Run full type check: `pnpm typecheck` from repository root (fix any TypeScript errors)
+- [x] T084 Run lint: `pnpm lint` from repository root (fix any linting issues)
+- [x] T085 Format code: `pnpm format` from repository root (Prettier)
+- [x] T086 Create production build: `pnpm build` from repository root (verify no build errors)
+- [x] T087 Test production build locally: `cd apps/web && pnpm start` (verify functionality matches dev)
 - [ ] T088 Update CLAUDE.md with any new patterns or components added during implementation
 
 ---
@@ -337,6 +340,7 @@ Task T042-T045: Integration checks
 **MVP Deliverable**: Locally testable app with core voting loop (admins create polls, voters vote, results displayed)
 
 **Task Count for MVP**: 61 tasks (T001-T061)
+
 - Setup: 3 tasks
 - Foundational: 28 tasks (critical infrastructure)
 - User Story 1: 14 tasks (voting functionality)
@@ -420,6 +424,7 @@ npx prisma db seed
 ---
 
 **Total Task Count**: 88 tasks
+
 - **MVP (P1 only)**: 61 tasks (T001-T061)
 - **P2 (Sort/Filter)**: 5 tasks (T062-T066)
 - **P3 (Comments + Profiles)**: 8 tasks (T067-T074)

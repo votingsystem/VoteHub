@@ -7,6 +7,7 @@
 ## Overview
 
 This document defines the complete database schema for VoteHub using Prisma ORM. The model supports:
+
 - User authentication with role-based access (Admin/Voter)
 - Time-bound polls with 2-5 custom voting options
 - One vote per user per poll (enforced via unique constraint)
@@ -248,6 +249,7 @@ model Comment {
 **Purpose**: Represents registered users (voters and administrators).
 
 **Key Attributes**:
+
 - `id`: Unique identifier (CUID)
 - `email`: Unique, used for login
 - `username`: Unique, displayed publicly
@@ -255,12 +257,14 @@ model Comment {
 - `password`: Hashed by BetterAuth
 
 **Relationships**:
+
 - One user can create many polls (author)
 - One user can cast many votes (one per poll constraint enforced separately)
 - One user can write many comments
 - Admins can create many tags
 
 **Business Rules**:
+
 - Admin accounts created during system setup (per clarification)
 - Regular users register as VOTER role (no UI for role promotion)
 - Email and username must be unique
@@ -272,6 +276,7 @@ model Comment {
 **Purpose**: Poll categorization for filtering and organization.
 
 **Key Attributes**:
+
 - `id`: Unique identifier
 - `name`: Display name ("Politics", "Technology")
 - `slug`: URL-friendly version ("politics", "technology")
@@ -279,10 +284,12 @@ model Comment {
 - `createdAt`: Timestamp
 
 **Relationships**:
+
 - One tag can be applied to many polls
 - One admin (User) can create many tags
 
 **Business Rules**:
+
 - Only admins can create tags (per clarification)
 - Predefined tags seeded during setup
 - Slug auto-generated from name (lowercase, hyphenated)
@@ -295,6 +302,7 @@ model Comment {
 **Purpose**: Represents a voting poll with time boundaries and custom options.
 
 **Key Attributes**:
+
 - `id`: Unique identifier
 - `title`: Poll title (5-200 chars)
 - `description`: Detailed description (up to 5000 chars)
@@ -307,6 +315,7 @@ model Comment {
 - `tagId`: Single tag for categorization
 
 **Relationships**:
+
 - One poll has 2-5 voting options (enforced in app layer)
 - One poll can receive many votes
 - One poll can have many comments
@@ -314,6 +323,7 @@ model Comment {
 - One poll has one author (admin user)
 
 **Business Rules**:
+
 - Only admins can create polls (FR-003)
 - Start date must be now or in the future (FR-009)
 - Duration: 1-8760 hours (FR-007d, per clarification)
@@ -331,16 +341,19 @@ model Comment {
 **Purpose**: Represents one voting choice within a poll.
 
 **Key Attributes**:
+
 - `id`: Unique identifier
 - `label`: Option text (1-100 chars, e.g., "Strongly Agree")
 - `order`: Display order (0-4)
 - `pollId`: Parent poll reference
 
 **Relationships**:
+
 - Many voting options belong to one poll
 - One option can receive many votes
 
 **Business Rules**:
+
 - Minimum 2 options per poll (FR-008)
 - Maximum 5 options per poll (FR-008, per spec clarification over constitution's max 4)
 - Order must be unique within poll (enforced by unique constraint)
@@ -353,6 +366,7 @@ model Comment {
 **Purpose**: Records a user's vote on a poll.
 
 **Key Attributes**:
+
 - `id`: Unique identifier
 - `userId`: Voter reference
 - `pollId`: Poll reference
@@ -360,23 +374,26 @@ model Comment {
 - `createdAt`: Timestamp (used for trending calculations)
 
 **Relationships**:
+
 - Many votes belong to one user
 - Many votes belong to one poll
 - Many votes belong to one voting option
 
 **Business Rules**:
+
 - **ONE VOTE PER USER PER POLL** (enforced by `@@unique([userId, pollId])`) - FR-015
 - Votes cannot be changed after submission (FR-016, per spec clarification)
 - Votes are anonymous in public results but tracked by userId (A-003)
 - Cascading delete: if user/poll/option deleted, votes deleted
 
 **Integrity Enforcement**:
+
 ```typescript
 // Service layer check before insert
 const existing = await prisma.vote.findUnique({
-  where: { userId_pollId: { userId, pollId } }
-})
-if (existing) throw new Error("You have already voted on this poll")
+  where: { userId_pollId: { userId, pollId } },
+});
+if (existing) throw new Error("You have already voted on this poll");
 ```
 
 ---
@@ -386,6 +403,7 @@ if (existing) throw new Error("You have already voted on this poll")
 **Purpose**: User-generated comments on polls with nested threading.
 
 **Key Attributes**:
+
 - `id`: Unique identifier
 - `text`: Comment content
 - `authorId`: Comment author
@@ -394,11 +412,13 @@ if (existing) throw new Error("You have already voted on this poll")
 - `createdAt`: Timestamp
 
 **Relationships**:
+
 - Many comments belong to one user (author)
 - Many comments belong to one poll
 - Self-referential: one comment can have many replies (nested threading)
 
 **Business Rules**:
+
 - Top-level comments: `parentId = null`
 - Nested replies: `parentId = parent comment ID`
 - Maximum 5 levels of nesting supported (SC-008)
@@ -407,21 +427,22 @@ if (existing) throw new Error("You have already voted on this poll")
 - Cascading delete: if parent deleted, replies deleted
 
 **Threading Queries**:
+
 ```typescript
 // Fetch top-level comments
 const topLevel = await prisma.comment.findMany({
   where: { pollId, parentId: null },
-  orderBy: { createdAt: 'desc' },
+  orderBy: { createdAt: "desc" },
   include: {
     author: true,
     replies: {
       include: {
         author: true,
-        replies: true // Recursive nesting (limit depth in app layer)
-      }
-    }
-  }
-})
+        replies: true, // Recursive nesting (limit depth in app layer)
+      },
+    },
+  },
+});
 ```
 
 ---
@@ -431,12 +452,14 @@ const topLevel = await prisma.comment.findMany({
 **Purpose**: BetterAuth session management (library-managed).
 
 **Key Attributes**:
+
 - `id`: Session identifier
 - `userId`: User reference
 - `expiresAt`: Session expiration
 - `createdAt`: Session start time
 
 **Business Rules**:
+
 - Sessions expire after 7 days (configurable in BetterAuth)
 - Refresh daily if user active
 - Cascading delete: if user deleted, sessions deleted
@@ -446,6 +469,7 @@ const topLevel = await prisma.comment.findMany({
 ## Indexes & Performance
 
 ### Feed Query Optimization
+
 ```sql
 -- Most common query: active polls, newest first
 SELECT * FROM "Poll"
@@ -457,6 +481,7 @@ LIMIT 20;
 ```
 
 ### Tag Filtering
+
 ```sql
 -- Polls by tag
 SELECT * FROM "Poll"
@@ -467,6 +492,7 @@ ORDER BY "createdAt" DESC;
 ```
 
 ### Vote Aggregation
+
 ```sql
 -- Vote count per option
 SELECT "optionId", COUNT(*) as count
@@ -478,6 +504,7 @@ GROUP BY "optionId";
 ```
 
 ### Trending Algorithm
+
 ```sql
 -- Time-weighted votes (votes in last N hours)
 SELECT "pollId", COUNT(*) as recent_votes
@@ -494,13 +521,13 @@ GROUP BY "pollId";
 
 ### Database-Level Constraints
 
-| Constraint | Enforced By | Purpose |
-|------------|-------------|---------|
-| Unique email | `@unique` on User.email | Prevent duplicate accounts |
-| Unique username | `@unique` on User.username | Prevent duplicate usernames |
-| Unique tag name/slug | `@unique` on Tag.name, Tag.slug | Prevent duplicate tags |
-| One vote per user per poll | `@@unique([userId, pollId])` on Vote | Vote integrity (FR-015) |
-| Unique option order | `@@unique([pollId, order])` on VotingOption | Consistent option display |
+| Constraint                 | Enforced By                                 | Purpose                     |
+| -------------------------- | ------------------------------------------- | --------------------------- |
+| Unique email               | `@unique` on User.email                     | Prevent duplicate accounts  |
+| Unique username            | `@unique` on User.username                  | Prevent duplicate usernames |
+| Unique tag name/slug       | `@unique` on Tag.name, Tag.slug             | Prevent duplicate tags      |
+| One vote per user per poll | `@@unique([userId, pollId])` on Vote        | Vote integrity (FR-015)     |
+| Unique option order        | `@@unique([pollId, order])` on VotingOption | Consistent option display   |
 
 ### Application-Level Validation (Zod)
 
@@ -511,18 +538,23 @@ const pollCreationSchema = z.object({
   description: z.string().min(10).max(5000),
   link: z.string().url().optional().or(z.literal("")),
   tagId: z.string().cuid(),
-  startAt: z.date().refine(d => d >= new Date()),
+  startAt: z.date().refine((d) => d >= new Date()),
   durationHours: z.number().int().min(1).max(8760),
-  options: z.array(z.object({
-    label: z.string().min(1).max(100)
-  })).min(2).max(5)
-})
+  options: z
+    .array(
+      z.object({
+        label: z.string().min(1).max(100),
+      }),
+    )
+    .min(2)
+    .max(5),
+});
 
 // Vote submission validation
 const voteSchema = z.object({
   pollId: z.string().cuid(),
-  optionId: z.string().cuid()
-})
+  optionId: z.string().cuid(),
+});
 ```
 
 ---
@@ -538,25 +570,26 @@ SCHEDULED ──[startAt reached]──> ACTIVE ──[endAt reached]──> CLO
 ```
 
 **Transition Logic** (in `poll-service.ts`):
+
 ```typescript
 function computePollStatus(poll: Poll): PollStatus {
-  const now = new Date()
-  if (now < poll.startAt) return 'SCHEDULED'
-  if (now >= poll.startAt && now < poll.endAt) return 'ACTIVE'
-  return 'CLOSED'
+  const now = new Date();
+  if (now < poll.startAt) return "SCHEDULED";
+  if (now >= poll.startAt && now < poll.endAt) return "ACTIVE";
+  return "CLOSED";
 }
 
 // Status updated on-demand (no background jobs in MVP)
 async function getPollWithStatus(pollId: string) {
-  const poll = await prisma.poll.findUnique({ where: { id: pollId } })
-  const status = computePollStatus(poll)
+  const poll = await prisma.poll.findUnique({ where: { id: pollId } });
+  const status = computePollStatus(poll);
   if (status !== poll.status) {
     await prisma.poll.update({
       where: { id: pollId },
-      data: { status }
-    })
+      data: { status },
+    });
   }
-  return { ...poll, status }
+  return { ...poll, status };
 }
 ```
 
@@ -566,34 +599,34 @@ async function getPollWithStatus(pollId: string) {
 
 ```typescript
 // apps/web/prisma/seed.ts
-import { PrismaClient } from '@prisma/client'
-import { hash } from 'bcrypt'
+import { PrismaClient } from "@prisma/client";
+import { hash } from "bcrypt";
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 async function main() {
   // Create admin user
   const adminUser = await prisma.user.upsert({
-    where: { email: 'admin@votehub.com' },
+    where: { email: "admin@votehub.com" },
     update: {},
     create: {
-      email: 'admin@votehub.com',
-      username: 'admin',
-      password: await hash('admin123', 10), // Change in production!
-      role: 'ADMIN'
-    }
-  })
+      email: "admin@votehub.com",
+      username: "admin",
+      password: await hash("admin123", 10), // Change in production!
+      role: "ADMIN",
+    },
+  });
 
   // Create default tags
   const tags = [
-    { name: 'Politics', slug: 'politics' },
-    { name: 'Technology', slug: 'technology' },
-    { name: 'Science', slug: 'science' },
-    { name: 'Entertainment', slug: 'entertainment' },
-    { name: 'Sports', slug: 'sports' },
-    { name: 'World News', slug: 'world-news' },
-    { name: 'Opinion', slug: 'opinion' }
-  ]
+    { name: "Politics", slug: "politics" },
+    { name: "Technology", slug: "technology" },
+    { name: "Science", slug: "science" },
+    { name: "Entertainment", slug: "entertainment" },
+    { name: "Sports", slug: "sports" },
+    { name: "World News", slug: "world-news" },
+    { name: "Opinion", slug: "opinion" },
+  ];
 
   for (const tag of tags) {
     await prisma.tag.upsert({
@@ -601,41 +634,44 @@ async function main() {
       update: {},
       create: {
         ...tag,
-        createdBy: adminUser.id
-      }
-    })
+        createdBy: adminUser.id,
+      },
+    });
   }
 
   // Create sample poll
-  const techTag = await prisma.tag.findUnique({ where: { slug: 'technology' } })
+  const techTag = await prisma.tag.findUnique({
+    where: { slug: "technology" },
+  });
 
   const poll = await prisma.poll.create({
     data: {
-      title: 'Should AI development be regulated?',
-      description: 'As AI technology advances rapidly, there is debate about government oversight.',
+      title: "Should AI development be regulated?",
+      description:
+        "As AI technology advances rapidly, there is debate about government oversight.",
       startAt: new Date(),
       durationHours: 168, // 1 week
       endAt: new Date(Date.now() + 168 * 60 * 60 * 1000),
-      status: 'ACTIVE',
+      status: "ACTIVE",
       authorId: adminUser.id,
       tagId: techTag.id,
       options: {
         create: [
-          { label: 'Strongly regulate', order: 0 },
-          { label: 'Light regulation', order: 1 },
-          { label: 'Self-regulation only', order: 2 },
-          { label: 'No regulation', order: 3 }
-        ]
-      }
-    }
-  })
+          { label: "Strongly regulate", order: 0 },
+          { label: "Light regulation", order: 1 },
+          { label: "Self-regulation only", order: 2 },
+          { label: "No regulation", order: 3 },
+        ],
+      },
+    },
+  });
 
-  console.log({ adminUser, tags, poll })
+  console.log({ adminUser, tags, poll });
 }
 
 main()
   .catch(console.error)
-  .finally(() => prisma.$disconnect())
+  .finally(() => prisma.$disconnect());
 ```
 
 ---
@@ -643,6 +679,7 @@ main()
 ## Migration Strategy
 
 ### Initial Migration
+
 ```bash
 # Generate Prisma client and create migration
 npx prisma migrate dev --name init
@@ -652,6 +689,7 @@ npx prisma migrate deploy
 ```
 
 ### Future Schema Changes
+
 - **Adding optional fields**: Safe, no data migration needed
 - **Adding required fields**: Requires default value or backfill
 - **Removing fields**: Use `@deprecated` first, remove in next major version
@@ -662,6 +700,7 @@ npx prisma migrate deploy
 ## Summary
 
 This data model supports all VoteHub functional requirements:
+
 - ✅ User roles (Admin/Voter) with authentication
 - ✅ Time-bound polls with scheduling (SCHEDULED → ACTIVE → CLOSED)
 - ✅ 2-5 custom voting options per poll

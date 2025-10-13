@@ -5,6 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project Overview
 
 VoteHub is a **Turborepo monorepo** built with:
+
 - **Next.js 15** (React 19) - main web application in `apps/web`
 - **shadcn/ui** - shared UI component library in `packages/ui`
 - **pnpm** workspaces for package management
@@ -13,6 +14,7 @@ VoteHub is a **Turborepo monorepo** built with:
 ## Development Commands
 
 ### At monorepo root:
+
 ```bash
 pnpm dev              # Start all apps in dev mode
 pnpm build            # Build all apps and packages
@@ -21,6 +23,7 @@ pnpm format           # Format with Prettier
 ```
 
 ### Web app (`apps/web`):
+
 ```bash
 cd apps/web
 pnpm dev              # Start Next.js dev server with Turbopack
@@ -32,6 +35,7 @@ pnpm typecheck        # Type check without emitting
 ```
 
 ### UI package (`packages/ui`):
+
 ```bash
 cd packages/ui
 pnpm lint             # Lint UI components
@@ -40,26 +44,32 @@ pnpm lint             # Lint UI components
 ## Architecture
 
 ### Monorepo Structure
+
 - **`apps/web/`** - Next.js application (App Router)
 - **`packages/ui/`** - Shared React component library using shadcn/ui
 - **`packages/typescript-config/`** - Shared TypeScript configs
 - **`packages/eslint-config/`** - Shared ESLint configs
 
 ### UI Package (`@workspace/ui`)
+
 The UI package is a **component library** that exports:
+
 - **Components**: `@workspace/ui/components/*` (e.g., `@workspace/ui/components/button`)
 - **Styles**: `@workspace/ui/globals.css` - imported in app layout
 - **Utilities**: `@workspace/ui/lib/*` (e.g., `cn()` utility for class merging)
 - **Hooks**: `@workspace/ui/hooks/*`
 
 Components are built with:
+
 - Radix UI primitives
 - Tailwind CSS v4 (using `@tailwindcss/postcss`)
 - class-variance-authority for variant management
 - next-themes for theme support
 
 ### Adding shadcn/ui Components
+
 Run from the **monorepo root**:
+
 ```bash
 pnpm dlx shadcn@latest add <component-name> -c apps/web
 ```
@@ -67,6 +77,7 @@ pnpm dlx shadcn@latest add <component-name> -c apps/web
 This places components in `packages/ui/src/components/` for use across the monorepo.
 
 ### Theme System
+
 - Theme provider configured in `apps/web/components/providers.tsx`
 - Supports system/light/dark themes via next-themes
 - Global styles in `packages/ui/src/styles/globals.css`
@@ -81,6 +92,7 @@ This places components in `packages/ui/src/components/` for use across the monor
 ## Build System
 
 Turbo manages build pipeline with:
+
 - **Build task**: Depends on upstream package builds (`^build`)
 - **Dev task**: Persistent, no caching
 - **Lint task**: Depends on upstream lints
