@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@workspace/ui/components/button";
 import {
   Card,
@@ -8,38 +6,30 @@ import {
   CardHeader,
   CardTitle,
 } from "@workspace/ui/components/card";
-import { useEffect } from "react";
 import Link from "next/link";
 
-export default function PollDetailError({
-  error,
-  reset,
-}: {
-  error: Error & { digest?: string };
-  reset: () => void;
-}) {
-  useEffect(() => {
-    console.error("Poll detail error:", error);
-  }, [error]);
-
+export default function UnauthorizedPage() {
   return (
     <div className="max-w-3xl mx-auto">
       <Card>
         <CardHeader>
-          <CardTitle>Something went wrong</CardTitle>
+          <CardTitle>Access Denied</CardTitle>
           <CardDescription>
-            We encountered an error while loading this poll
+            You don't have permission to access this page
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            {error.message || "An unexpected error occurred"}
+            This page is restricted to administrators only. If you believe you
+            should have access, please contact your administrator.
           </p>
 
           <div className="flex gap-2">
-            <Button onClick={reset}>Try again</Button>
-            <Button variant="outline" asChild>
-              <Link href="/">Back to home</Link>
+            <Button asChild>
+              <Link href="/">Back to Home</Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/login">Login</Link>
             </Button>
           </div>
         </CardContent>

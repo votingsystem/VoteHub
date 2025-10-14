@@ -34,7 +34,14 @@ export function VoteResults({ results, userVotedOptionId }: VoteResultsProps) {
                 </span>
               </div>
 
-              <div className="relative h-8 bg-secondary rounded-md overflow-hidden">
+              <div
+                className="relative h-8 bg-secondary rounded-md overflow-hidden"
+                role="progressbar"
+                aria-valuenow={result.percentage}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label={`${result.option.label}: ${result.percentage}% of votes`}
+              >
                 <div
                   className={`absolute inset-y-0 left-0 ${
                     isUserChoice ? "bg-primary" : "bg-primary/70"

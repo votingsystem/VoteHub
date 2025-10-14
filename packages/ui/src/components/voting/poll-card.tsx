@@ -24,7 +24,10 @@ export function PollCard({ poll, compact = true }: PollCardProps) {
   const timeRemaining = getTimeRemaining(poll.endAt);
 
   return (
-    <Link href={`/poll/${poll.id}`}>
+    <Link
+      href={`/poll/${poll.id}`}
+      className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-lg"
+    >
       <Card className="hover:border-primary transition-colors cursor-pointer">
         <CardHeader>
           <div className="flex items-start justify-between gap-2">

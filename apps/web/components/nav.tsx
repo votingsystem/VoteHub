@@ -6,9 +6,9 @@ export async function Nav() {
   const session = await getSession();
 
   return (
-    <nav className="border-b">
+    <nav className="border-b" aria-label="Main navigation">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link href="/" className="text-xl font-bold">
+        <Link href="/" className="text-xl font-bold" aria-label="VoteHub home">
           VoteHub
         </Link>
 
@@ -18,13 +18,16 @@ export async function Nav() {
               <Link
                 href={`/user/${session.user.username}`}
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                aria-label={`View profile for ${session.user.username}`}
               >
                 {session.user.username}
               </Link>
 
               {session.user.role === "ADMIN" && (
                 <Button asChild variant="outline" size="sm">
-                  <Link href="/admin/polls">Admin</Link>
+                  <Link href="/admin/polls" aria-label="Admin dashboard">
+                    Admin
+                  </Link>
                 </Button>
               )}
 

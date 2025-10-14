@@ -68,7 +68,7 @@ export function PollForm({ tags }: PollFormProps) {
         setIsSubmitting(false);
       }
       // If successful, the action will redirect
-    } catch (err) {
+    } catch {
       setError("An unexpected error occurred");
       setIsSubmitting(false);
     }

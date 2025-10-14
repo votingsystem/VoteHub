@@ -31,7 +31,7 @@ export function TagForm() {
         setIsSubmitting(false);
         router.refresh();
       }
-    } catch (err) {
+    } catch {
       setError("An unexpected error occurred");
       setIsSubmitting(false);
     }

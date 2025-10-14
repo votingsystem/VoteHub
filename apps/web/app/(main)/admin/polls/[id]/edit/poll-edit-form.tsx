@@ -96,7 +96,7 @@ export function PollEditForm({ poll, tags }: PollEditFormProps) {
         // Redirect to admin polls page on success
         router.push("/admin/polls");
       }
-    } catch (err) {
+    } catch {
       setError("An unexpected error occurred");
       setIsSubmitting(false);
     }

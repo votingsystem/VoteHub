@@ -240,17 +240,17 @@ Tasks use the existing monorepo structure:
 
 **Purpose**: Final touches, testing, documentation after core features complete
 
-- [ ] T078 [P] Add loading states (Suspense boundaries) for slow queries in feed and poll detail pages
-- [ ] T079 [P] Verify keyboard navigation works (Tab through poll cards, Enter to open, Tab through vote options, Enter/Space to vote)
-- [ ] T080 [P] Test without JavaScript (disable in DevTools): forms should submit via native POST, results should render server-side
-- [ ] T081 [P] Verify WCAG 2.1 AA compliance (color contrast, ARIA labels on interactive elements)
-- [ ] T082 [P] Add error handling: 404 for missing polls, 401/403 for unauthorized access, 409 for duplicate votes
+- [x] T078 [P] Add loading states (Suspense boundaries) for slow queries in feed and poll detail pages
+- [x] T079 [P] Verify keyboard navigation works (Tab through poll cards, Enter to open, Tab through vote options, Enter/Space to vote)
+- [x] T080 [P] Test without JavaScript (disable in DevTools): forms should submit via native POST, results should render server-side
+- [x] T081 [P] Verify WCAG 2.1 AA compliance (color contrast, ARIA labels on interactive elements)
+- [x] T082 [P] Add error handling: 404 for missing polls, 401/403 for unauthorized access, 409 for duplicate votes
 - [x] T083 Run full type check: `pnpm typecheck` from repository root (fix any TypeScript errors)
 - [x] T084 Run lint: `pnpm lint` from repository root (fix any linting issues)
 - [x] T085 Format code: `pnpm format` from repository root (Prettier)
 - [x] T086 Create production build: `pnpm build` from repository root (verify no build errors)
 - [x] T087 Test production build locally: `cd apps/web && pnpm start` (verify functionality matches dev)
-- [ ] T088 Update CLAUDE.md with any new patterns or components added during implementation
+- [x] T088 Update CLAUDE.md with any new patterns or components added during implementation
 
 ---
 

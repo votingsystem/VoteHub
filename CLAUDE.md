@@ -97,3 +97,62 @@ Turbo manages build pipeline with:
 - **Dev task**: Persistent, no caching
 - **Lint task**: Depends on upstream lints
 - Outputs cached in `.next/` (excluding cache directory)
+
+## Application Architecture
+
+### Authentication
+
+- **BetterAuth** - Configured in `apps/web/lib/auth.ts`
+- Email/password authentication
+- Session management with role-based access (ADMIN/VOTER)
+- Auth Server Actions in `apps/web/actions/auth-actions.ts`
+- Protected routes using layout-level auth checks
+
+### Database
+
+- **Prisma ORM** with PostgreSQL
+- Schema: `apps/web/prisma/schema.prisma`
+- Entities: User, Poll, VotingOption, Vote, Comment, Tag, Session
+- Client singleton: `apps/web/lib/prisma.ts`
+
+### Data Flow Pattern
+
+1. **Server Components** fetch data directly from services
+2. **Services** (`apps/web/services/`) handle business logic and database queries
+3. **Server Actions** (`apps/web/actions/`) handle mutations with validation
+4. **Client Components** use Server Actions via forms or `useTransition`
+
+### Custom Voting Components
+
+Located in `packages/ui/src/components/voting/`:
+
+- **PollCard** - Displays poll summary with status badge
+- **VoteOptions** - Interactive voting form with optimistic UI
+- **VoteResults** - Horizontal bar chart showing vote percentages
+- **CommentThread** - Recursive threaded comments (Phase 6)
+
+### Validation
+
+- **Zod schemas** in `apps/web/lib/validations.ts`
+- Server-side validation in Server Actions
+- Type-safe validation with TypeScript
+
+### Error Handling
+
+- **404**: `not-found.tsx` files for missing resources
+- **401/403**: Layout-level redirects for unauthorized access
+- **409**: Duplicate vote prevention with unique constraints
+- **Error boundaries**: `error.tsx` files for runtime errors
+
+### Loading States
+
+- Next.js `loading.tsx` files for route-level loading
+- Skeleton UIs matching page layouts
+- Automatic Suspense boundaries
+
+### Accessibility
+
+- ARIA labels on interactive elements
+- Keyboard navigation support with focus indicators
+- Semantic HTML with proper ARIA roles
+- WCAG 2.1 AA compliant color contrast
