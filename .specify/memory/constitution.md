@@ -48,6 +48,7 @@ concerns creates tight coupling that prevents unit testing and code reuse across
 application.
 
 **Requirements**:
+
 - Service layer in `apps/web/services/` handles all data operations
 - Components in `apps/web/components/` focus on rendering and user interaction
 - Use custom hooks in `packages/ui/hooks/` for shared stateful logic
@@ -65,6 +66,7 @@ development.
 size, improves initial load times, and enables better SEO—critical for public voting content.
 
 **Requirements**:
+
 - Default to Server Components (no `"use client"` directive)
 - Add `"use client"` only when needed: useState, useEffect, event handlers, browser APIs
 - Use Server Actions for form submissions, voting operations, data mutations
@@ -84,6 +86,7 @@ published package exports.
 Violating this structure breaks incremental builds and task orchestration.
 
 **Requirements**:
+
 - `apps/web/` - Next.js voting application (main deployable)
 - `packages/ui/` - Shared component library (shadcn/ui components)
 - `packages/typescript-config/` - Shared TypeScript configurations
@@ -101,6 +104,7 @@ components in `apps/web`. Custom components extending shadcn MUST live in `packa
 components in the shared package ensures visual consistency and reduces maintenance overhead.
 
 **Requirements**:
+
 - Add shadcn components: `pnpm dlx shadcn@latest add <component> -c apps/web`
 - Components land in `packages/ui/src/components/`
 - Custom voting UI components (poll cards, vote buttons) in `packages/ui/src/components/voting/`
@@ -119,6 +123,7 @@ integrations (require inline justification).
 compromise poll results. Strong typing catches issues at compile time.
 
 **Requirements**:
+
 - Extend `@workspace/typescript-config` in all workspaces
 - Strict mode enabled: `noImplicitAny`, `strictNullChecks`, `strictFunctionTypes`
 - Define types for polls: `Poll`, `VoteOption`, `Vote`, `VoteResult`
@@ -137,6 +142,7 @@ structure.
 load and accelerates user adoption of VoteHub.
 
 **Requirements**:
+
 - Card-based layout for poll feed (similar to Reddit post feed)
 - Poll metadata visible: author, timestamp, vote count, comment count (if applicable)
 - Maximum 4 vote options per poll (user requirement)
@@ -157,6 +163,7 @@ manipulation.
 tampering. Server-side enforcement protects poll authenticity.
 
 **Requirements**:
+
 - Server Actions for all vote submissions (never client-side API calls with exposed endpoints)
 - Validate vote payload with Zod schemas before database write
 - Enforce one active vote per user per poll (database constraints + application logic)
@@ -175,6 +182,7 @@ Actions. Poll results visible on server-rendered pages. Keyboard navigation for 
 assistive technologies, slow connections, or JavaScript-disabled environments.
 
 **Requirements**:
+
 - Forms use `<form action={serverAction}>` pattern (native HTML submission)
 - Vote buttons as radio inputs with visual styling (work without JS)
 - Server-rendered poll results (JavaScript enhances with real-time updates)
@@ -301,8 +309,8 @@ pnpm typecheck       # TypeScript validation
 
 If a principle must be violated, document in implementation plan:
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
+| Violation                                      | Why Needed                           | Simpler Alternative Rejected Because                     |
+| ---------------------------------------------- | ------------------------------------ | -------------------------------------------------------- |
 | Example: Client Component for entire poll feed | Real-time vote updates via WebSocket | Server polling adds 2s latency, poor UX for live results |
 
 ### Living Document
