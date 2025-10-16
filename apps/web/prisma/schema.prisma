@@ -17,25 +17,36 @@ datasource db {
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
-  password  String   // Hashed via BetterAuth
+  password  String?  // Nullable - deprecated, will be removed after migration
   username  String   @unique
   role      UserRole @default(VOTER)
+  name      String?  // Display name from Google profile
+
+  // Google OAuth fields (new)
+  googleId              String?   @unique
+  googleEmail           String?
+  googleProfilePicture  String?
+  lastGoogleSync        DateTime?
+
+  // Deprecated (will be removed in Phase 9)
+  passwordResetToken    String?
 
   // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   // Relations
-  polls        Poll[]
-  votes        Vote[]
-  comments     Comment[]
-  createdTags  Tag[]      @relation("TagCreator")
-
-  // BetterAuth session tracking (managed by library)
-  sessions     Session[]
+  polls         Poll[]
+  votes         Vote[]
+  comments      Comment[]
+  createdTags   Tag[]           @relation("TagCreator")
+  sessions      Session[]
+  accounts      Account[]
+  authEvents    AuthEvent[]
 
   @@index([email])
   @@index([username])
+  @@index([googleId])
 }
 
 enum UserRole {
@@ -47,10 +58,71 @@ model Session {
   id        String   @id @default(cuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
   expiresAt DateTime
   createdAt DateTime @default(now())
+  ipAddress String?
+  userAgent String?
 
   @@index([userId])
+  @@index([token])
+  @@index([expiresAt])
+}
+
+model Account {
+  id                String    @id @default(cuid())
+  userId            String
+  accountId         String
+  providerId        String
+  accessToken       String?
+  refreshToken      String?
+  idToken           String?
+  expiresAt         DateTime?
+  password          String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, accountId])
+  @@index([userId])
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([identifier, value])
+}
+
+model AuthEvent {
+  id           String        @id @default(cuid())
+  userId       String?
+  eventType    AuthEventType
+  ipAddress    String?
+  userAgent    String?
+  success      Boolean
+  errorMessage String?
+  timestamp    DateTime      @default(now())
+
+  user         User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([eventType])
+  @@index([timestamp])
+  @@index([ipAddress])
+}
+
+enum AuthEventType {
+  LOGIN
+  LOGOUT
+  FAILED_ATTEMPT
+  ACCOUNT_CREATION
+  TOKEN_EXPIRATION
 }
 
 // ============================================================================

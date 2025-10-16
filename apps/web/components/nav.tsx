@@ -1,6 +1,7 @@
-import { getSession, logoutAction } from "@/actions/auth-actions";
+import { getSession, signOutAction } from "@/actions/auth-actions";
 import { Button } from "@workspace/ui/components/button";
 import Link from "next/link";
+import Image from "next/image";
 
 export async function Nav() {
   const session = await getSession();
@@ -15,12 +16,27 @@ export async function Nav() {
         <div className="flex items-center gap-4">
           {session?.user ? (
             <>
+              {/* Profile link with avatar (T039) */}
               <Link
-                href={`/user/${session.user.username}`}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                aria-label={`View profile for ${session.user.username}`}
+                href="/profile"
+                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                aria-label="View your profile"
               >
-                {session.user.username}
+                {(session.user as any).googleProfilePicture ? (
+                  <Image
+                    src={(session.user as any).googleProfilePicture}
+                    alt={`${session.user.name || session.user.email}'s profile picture`}
+                    width={32}
+                    height={32}
+                    className="rounded-full"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-medium">
+                    {session.user.name?.[0]?.toUpperCase() ||
+                      session.user.email?.[0]?.toUpperCase() || "?"}
+                  </div>
+                )}
+                <span>{session.user.username}</span>
               </Link>
 
               {session.user.role === "ADMIN" && (
@@ -31,16 +47,16 @@ export async function Nav() {
                 </Button>
               )}
 
-              <form action={logoutAction as unknown as () => void}>
+              <form action={signOutAction as unknown as () => void}>
                 <Button type="submit" variant="ghost" size="sm">
-                  Logout
+                  Sign out
                 </Button>
               </form>
             </>
           ) : (
             <>
               <Button asChild variant="ghost" size="sm">
-                <Link href="/login">Login</Link>
+                <Link href="/sign-in">Sign in</Link>
               </Button>
 
               <Button asChild size="sm">
