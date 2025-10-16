@@ -10,7 +10,7 @@ interface GoogleSignInButtonProps {
 }
 
 export function GoogleSignInButton({
-  callbackURL = "/dashboard",
+  callbackURL = "/",
   errorCallbackURL = "/auth/error",
 }: GoogleSignInButtonProps) {
   const [isLoading, setIsLoading] = useState(false);

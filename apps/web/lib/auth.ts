@@ -28,7 +28,7 @@ export const auth = betterAuth({
       },
       username: {
         type: "string",
-        required: true,
+        required: false, // Generated in onAPIResponse hook from email
       },
     },
   },
@@ -59,31 +59,65 @@ export const auth = betterAuth({
   },
   onAPIResponse: {
     signInSocial: async (response: any) => {
-      // T038: Profile picture sync logic
+      // T038: Profile picture sync logic + username generation
       // After successful Google sign-in, update user profile with latest Google data
       if (response.body && "user" in response.body) {
         const user = response.body.user as any;
 
-        // Get account data to access Google profile information
-        const account = await prisma.account.findFirst({
-          where: {
-            userId: user.id,
-            providerId: "google",
-          },
+        // Fetch current user data
+        const existingUser = await prisma.user.findUnique({
+          where: { id: user.id },
+          select: { username: true, email: true },
         });
 
-        if (account) {
-          // Update user with latest Google profile data
-          // BetterAuth stores profile image in user.image, sync to our custom field
-          await prisma.user.update({
-            where: { id: user.id },
-            data: {
-              googleProfilePicture: user.image || null, // BetterAuth stores profile image in user.image
-              lastGoogleSync: new Date(),
-              name: user.name || null, // Update name from Google
-            },
-          });
+        if (!existingUser) return response;
+
+        const updateData: any = {
+          googleProfilePicture: user.image || null, // BetterAuth stores profile image in user.image
+          lastGoogleSync: new Date(),
+          name: user.name || null, // Update name from Google
+        };
+
+        // Generate username from email if not set (new user)
+        if (!existingUser.username && existingUser.email) {
+          let username: string;
+          let attempt = 0;
+          const maxAttempts = 10;
+
+          // Try to generate unique username
+          do {
+            const prefix = existingUser.email
+              .split("@")[0]
+              .replace(/[^a-zA-Z0-9_-]/g, "_");
+            const randomSuffix = Math.floor(Math.random() * 10000);
+            username = `${prefix}_${randomSuffix}`;
+
+            // Check if username already exists
+            const existing = await prisma.user.findUnique({
+              where: { username },
+            });
+
+            if (!existing) {
+              updateData.username = username;
+              break;
+            }
+            attempt++;
+          } while (attempt < maxAttempts);
+
+          // Fallback: use timestamp if all attempts failed
+          if (!updateData.username) {
+            const prefix = existingUser.email
+              .split("@")[0]
+              .replace(/[^a-zA-Z0-9_-]/g, "_");
+            updateData.username = `${prefix}_${Date.now()}`;
+          }
         }
+
+        // Update user with latest Google profile data
+        await prisma.user.update({
+          where: { id: user.id },
+          data: updateData,
+        });
       }
 
       return response;

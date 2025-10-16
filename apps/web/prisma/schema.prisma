@@ -18,9 +18,13 @@ model User {
   id        String   @id @default(cuid())
   email     String   @unique
   password  String?  // Nullable - deprecated, will be removed after migration
-  username  String   @unique
+  username  String?  @unique // Nullable - generated from email on first login
   role      UserRole @default(VOTER)
   name      String?  // Display name from Google profile
+
+  // BetterAuth fields
+  emailVerified Boolean  @default(false)
+  image         String?  // Profile picture URL (BetterAuth standard)
 
   // Google OAuth fields (new)
   googleId              String?   @unique
@@ -61,6 +65,7 @@ model Session {
   token     String   @unique
   expiresAt DateTime
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   ipAddress String?
   userAgent String?
 
@@ -70,19 +75,22 @@ model Session {
 }
 
 model Account {
-  id                String    @id @default(cuid())
-  userId            String
-  accountId         String
-  providerId        String
-  accessToken       String?
-  refreshToken      String?
-  idToken           String?
-  expiresAt         DateTime?
-  password          String?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  id                     String    @id @default(cuid())
+  userId                 String
+  accountId              String
+  providerId             String
+  accessToken            String?
+  refreshToken           String?
+  idToken                String?
+  expiresAt              DateTime?
+  accessTokenExpiresAt   DateTime?
+  refreshTokenExpiresAt  DateTime?
+  scope                  String?
+  password               String?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
 
-  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([providerId, accountId])
   @@index([userId])
