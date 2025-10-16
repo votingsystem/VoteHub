@@ -3,13 +3,20 @@ import type { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
 
 export async function middleware(request: NextRequest) {
-  // Get session from BetterAuth
-  const session = await auth.api.getSession({
-    headers: request.headers,
-  });
+  const pathname = request.nextUrl.pathname;
+
+  // Get session from BetterAuth with error handling
+  let session = null;
+  try {
+    session = await auth.api.getSession({
+      headers: request.headers,
+    });
+  } catch (error) {
+    console.error("Failed to get session in middleware:", error);
+    // Continue without session - let protected routes handle redirect
+  }
 
   const isAuthenticated = !!session;
-  const pathname = request.nextUrl.pathname;
 
   // Define protected routes that require authentication
   const protectedRoutes = [
